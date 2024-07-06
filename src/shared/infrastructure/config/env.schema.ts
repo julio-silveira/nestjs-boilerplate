@@ -9,5 +9,3 @@ export const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>;
 export type Environment = (typeof environment)[number];
-
-export const validateEnv = (config: any): Env => envSchema.parse(config);
