@@ -34,4 +34,15 @@ describe('UserEntity', () => {
     expect(validateUUID(id)).toBeTruthy();
     expect(entity._id).toBe(id);
   });
+
+  it('Should mount a JSON object', () => {
+    const props = { prop1: 'prop1', prop2: 2, prop3: true };
+    const entity = new StubEntity(props);
+
+    const json = entity.toJSON();
+
+    expect(json.prop1).toBe(props.prop1);
+    expect(json.prop2).toBe(props.prop2);
+    expect(json.prop3).toBe(props.prop3);
+  });
 });
