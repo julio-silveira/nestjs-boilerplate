@@ -1,5 +1,4 @@
-import { uuidv7 } from 'uuidv7';
-
+import { v7 as uuidv7 } from 'uuid';
 export abstract class Entity<Props> {
   public readonly _id: string;
   public readonly _props: Props;
