@@ -9,7 +9,7 @@ describe('UserEntity', () => {
     entity = new UserEntity(props);
   });
 
-  it('constructor ', () => {
+  it('constructor method', () => {
     expect(entity.props.name).toBe(props.name);
     expect(entity.props.email).toBe(props.email);
     expect(entity.props.password).toBe(props.password);
