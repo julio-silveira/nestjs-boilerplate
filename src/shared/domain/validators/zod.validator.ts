@@ -42,7 +42,7 @@ export abstract class ZodValidator<Props>
     for (const issue of error.issues) {
       ObjectUtil.accumulate({
         obj: errors,
-        key: issue.path.join('.'),
+        key: issue.path.join('.').toLocaleLowerCase(),
         value: issue.message,
       });
     }
@@ -51,6 +51,6 @@ export abstract class ZodValidator<Props>
   }
 
   private parseCommonError(error: Error): FieldsErrors {
-    return { [error.name]: [error.message] };
+    return { [error.name.toLocaleLowerCase()]: [error.message] };
   }
 }

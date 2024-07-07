@@ -1,42 +1,94 @@
-import { z } from 'zod';
+import * as zod from 'zod';
 import { ZodValidator } from './zod.validator';
 
-class StubClassValidation extends ZodValidator<{ field: string }> {}
+const stubSchema = zod.z.object({
+  field: zod.z.string(),
+});
+
+type StubSchemaType = zod.infer<typeof stubSchema>;
+
+class StubZodValidator extends ZodValidator<StubSchemaType> {}
+
+const zodErrorMock = zod.ZodError.create([
+  {
+    code: 'invalid_type',
+    expected: 'string',
+    received: 'number',
+    path: ['field'],
+    message: 'Expected string, received number',
+  },
+]);
 
 describe('ZodFields', () => {
-  let zodValidator: StubClassValidation;
+  let zodValidator: StubZodValidator;
 
   beforeEach(() => {
-    const schema = z.object({
-      field: z.string(),
-    });
-
-    zodValidator = new StubClassValidation(schema);
+    zodValidator = new StubZodValidator(stubSchema);
   });
 
   it('should be defined', () => {
     expect(zodValidator).toBeDefined();
   });
+  describe('validate', () => {
+    it('should return true when data is valid', () => {
+      const spyParse = jest.spyOn(zodValidator.schema, 'parse');
+      spyParse.mockReturnValue({ field: 'value' });
+      const data = { field: 'value' };
 
-  it('should return true when data is valid', () => {
-    const data = { field: 'value' };
+      const isValid = zodValidator.validate(data);
 
-    expect(zodValidator.validate(data)).toBeTruthy();
+      expect(isValid).toBeTruthy();
+      expect(zodValidator.validatedData).toEqual(data);
+    });
+
+    it('should return false when data is invalid', () => {
+      const spyParse = jest.spyOn(zodValidator.schema, 'parse');
+      spyParse.mockImplementation(() => {
+        throw new Error('Invalid data');
+      });
+      const data = { field: 123 };
+
+      const isValid = zodValidator.validate(data);
+
+      expect(isValid).toBeFalsy();
+      expect(zodValidator.validatedData).toEqual(null);
+      expect(zodValidator.errors).toEqual({ error: ['Invalid data'] });
+    });
   });
 
-  it('should return false when data is invalid', () => {
-    const data = { field: 123 };
+  describe('parseErrors', () => {
+    it('should parse ZodError', () => {
+      const errors = zodValidator['parseErrors'](zodErrorMock);
 
-    expect(zodValidator.validate(data)).toBeFalsy();
+      expect(errors).toEqual({
+        field: ['Expected string, received number'],
+      });
+    });
+
+    it('should parse common Error', () => {
+      const error = new Error('Invalid data');
+      const errors = zodValidator['parseErrors'](error);
+
+      expect(errors).toEqual({ error: ['Invalid data'] });
+    });
   });
 
-  it('should set errors when data is invalid', () => {
-    const data = { field: 123 };
+  describe('parseZodError', () => {
+    it('should parse ZodError', () => {
+      const errors = zodValidator['parseZodError'](zodErrorMock);
 
-    zodValidator.validate(data);
+      expect(errors).toEqual({
+        field: ['Expected string, received number'],
+      });
+    });
+  });
 
-    expect(zodValidator.errors).toEqual({
-      field: ['Expected string, received number'],
+  describe('parseCommonError', () => {
+    it('should parse common Error', () => {
+      const error = new Error('Invalid data');
+      const errors = zodValidator['parseCommonError'](error);
+
+      expect(errors).toEqual({ error: ['Invalid data'] });
     });
   });
 });
