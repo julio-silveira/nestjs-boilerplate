@@ -8,12 +8,12 @@ export type UserProps = {
 };
 
 export class UserEntity extends Entity<UserProps> {
-  constructor(
-    public readonly props: UserProps,
-    id?: string,
-  ) {
-    super(props, id);
-    this.props.createdAt = props.createdAt ?? new Date();
+  constructor(props: UserProps, id?: string) {
+    const requiredProps = {
+      ...props,
+      createdAt: props.createdAt ?? new Date(),
+    };
+    super(requiredProps, id);
   }
 
   update(props: Partial<UserProps>): void {

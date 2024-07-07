@@ -3,19 +3,20 @@ import {
   FieldsErrors,
   ValidatorFieldsInterface,
 } from './validator-fields.interface';
+import { ObjectUtil } from '../utils/object-util';
 
-export abstract class ZodFields<Props>
+export abstract class ZodValidator<Props>
   implements ValidatorFieldsInterface<Props>
 {
-  errors: FieldsErrors = null;
+  errors: FieldsErrors = {};
 
-  validatedData: Props = null;
+  validatedData: Props | null = null;
 
-  schema: ZodSchema<Props>;
+  constructor(public schema: ZodSchema<Props>) {}
 
   validate(data: unknown): boolean {
     try {
-      this.validatedData = this.schema.parse(data) as Props;
+      this.validatedData = this.schema.parse(data);
       return true;
     } catch (error) {
       this.errors = this.parseErrors(error);
@@ -39,7 +40,11 @@ export abstract class ZodFields<Props>
     const errors = {};
 
     for (const issue of error.issues) {
-      errors[issue.path.join('.')] = issue.message;
+      ObjectUtil.accumulate({
+        obj: errors,
+        key: issue.path.join('.'),
+        value: issue.message,
+      });
     }
 
     return errors;

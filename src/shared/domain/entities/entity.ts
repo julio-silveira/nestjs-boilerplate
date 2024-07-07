@@ -1,9 +1,9 @@
 import { v7 as uuidv7 } from 'uuid';
 export abstract class Entity<Props> {
   public readonly _id: string;
-  public readonly _props: Props;
+  public readonly _props: Required<Props>;
 
-  constructor(props: Props, id?: string) {
+  constructor(props: Required<Props>, id?: string) {
     this._id = id ?? uuidv7();
     this._props = props;
   }
@@ -12,7 +12,11 @@ export abstract class Entity<Props> {
     return this._id;
   }
 
-  toJSON(): { id: string } & Props {
+  get props(): Required<Props> {
+    return this._props;
+  }
+
+  toJSON(): { id: string } & Required<Props> {
     return { id: this._id, ...this._props };
   }
 }
