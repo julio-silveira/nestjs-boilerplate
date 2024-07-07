@@ -1,7 +1,7 @@
-import { UserEntity, UserProps } from './user.entity';
-import { UserDataBuilder } from '../testing/user-data-builder';
+import { UserDataBuilder } from '@/users/domain/testing/user-data-builder';
+import { UserEntity, UserProps } from '../../user.entity';
 
-describe('UserEntity', () => {
+describe('UserEntity unit tests', () => {
   let props: UserProps;
   let entity: UserEntity;
   beforeEach(() => {

@@ -1,6 +1,6 @@
-import { ObjectUtil } from './object-util';
+import { ObjectUtil } from '../../object-util';
 
-describe('ObjectUtil', () => {
+describe('ObjectUtil unit tests', () => {
   describe('accumulate', () => {
     it('should accumulate a value in an object', () => {
       const obj = { key: ['value1'] };

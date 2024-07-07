@@ -1,5 +1,5 @@
-import { Entity } from './entity';
 import { validate as validateUUID } from 'uuid';
+import { Entity } from '../../entity';
 type StubProps = {
   prop1: string;
   prop2: number;
@@ -8,7 +8,7 @@ type StubProps = {
 
 class StubEntity extends Entity<StubProps> {}
 
-describe('UserEntity', () => {
+describe('UserEntity unit tests', () => {
   it('Should set props and create new id', () => {
     const props = { prop1: 'prop1', prop2: 2, prop3: true };
     const entity = new StubEntity(props);

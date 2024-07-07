@@ -42,7 +42,7 @@ export abstract class ZodValidator<Props>
     for (const issue of error.issues) {
       ObjectUtil.accumulate({
         obj: errors,
-        key: issue.path.join('.').toLocaleLowerCase(),
+        key: issue.path.join('.'),
         value: issue.message,
       });
     }

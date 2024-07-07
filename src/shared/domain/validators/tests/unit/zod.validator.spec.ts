@@ -1,13 +1,15 @@
 import * as zod from 'zod';
-import { ZodValidator } from './zod.validator';
+import { ZodValidator } from '../../zod.validator';
 
-const stubSchema = zod.z.object({
-  field: zod.z.string(),
-});
+type StubType = {
+  field: string;
+};
 
-type StubSchemaType = zod.infer<typeof stubSchema>;
+const stubSchema = {
+  parse: jest.fn(),
+} as unknown as zod.ZodSchema<StubType>;
 
-class StubZodValidator extends ZodValidator<StubSchemaType> {}
+class StubZodValidator extends ZodValidator<StubType> {}
 
 const zodErrorMock = zod.ZodError.create([
   {
