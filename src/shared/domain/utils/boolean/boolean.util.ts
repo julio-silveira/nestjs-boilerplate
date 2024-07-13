@@ -1,4 +1,4 @@
-class BooleanUtil {
+export class BooleanUtil {
   static isFalsy(value: unknown): boolean {
     return !value;
   }
