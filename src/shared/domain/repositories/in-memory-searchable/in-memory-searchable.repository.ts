@@ -9,19 +9,28 @@ import {
   SortDirection,
   SortDirections,
 } from '../searchable-repository.interface';
-import { InMemoryRepository } from './in-memory.repository';
+import { InMemoryRepository } from '../in-memory/in-memory.repository';
 
 type FieldFiltersOutput<E extends Entity> = ((
   item: E,
-  fieldName: keyof E,
+  fieldName: keyof E['props'],
 ) => boolean)[];
 
 export abstract class InMemorySearchableRepository<E extends Entity>
   extends InMemoryRepository<E>
   implements SearchableRepositoryInterface<E>
 {
-  sortableFields: (keyof E)[] = [];
-  filterableFields: (keyof E)[] = [];
+  sortableFields: (keyof E['props'])[] = [];
+  filterableFields: (keyof E['props'])[] = [];
+
+  constructor(
+    sortableFields: (keyof E['props'])[],
+    filterableFields: (keyof E['props'])[],
+  ) {
+    super();
+    this.sortableFields = sortableFields;
+    this.filterableFields = filterableFields;
+  }
 
   async search(searchInput: SearchParams<E>): Promise<SearchResult<E>> {
     const items = await this.findMany();
@@ -76,7 +85,7 @@ export abstract class InMemorySearchableRepository<E extends Entity>
 
   protected applySort(
     items: E[],
-    sortBy: keyof E | null,
+    sortBy: keyof E['props'] | null,
     sortDirection: SortDirection | null,
   ) {
     if (!sortBy || !this.isSortableField(sortBy)) {
@@ -120,11 +129,11 @@ export abstract class InMemorySearchableRepository<E extends Entity>
     return items.slice(startIndex, endIndex);
   }
 
-  private isSortableField(field: keyof E): boolean {
+  private isSortableField(field: keyof E['props']): boolean {
     return this.sortableFields.includes(field);
   }
 
-  private isFilterableField(field: keyof E): boolean {
+  private isFilterableField(field: keyof E['props']): boolean {
     return this.filterableFields.includes(field);
   }
 
@@ -139,7 +148,7 @@ export abstract class InMemorySearchableRepository<E extends Entity>
       if (filterOption.op === FilterOperations.EQ) {
         return [
           ...acc,
-          (item: E, fieldName: keyof E) =>
+          (item: E, fieldName: keyof E['props']) =>
             item[fieldName] === filterOption.value,
         ];
       }

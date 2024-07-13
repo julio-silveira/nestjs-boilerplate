@@ -28,15 +28,15 @@ export type FilterComparison =
   (typeof FilterComparisonModes)[keyof typeof FilterComparisonModes];
 
 export type Filter<E extends Entity> = {
-  field: keyof E;
+  field: keyof E['props'];
   comparisonMode: FilterComparison | null;
-  filters: Array<{ op: FilterOperation; value: E[keyof E] }>;
+  filters: Array<{ op: FilterOperation; value: E[keyof E['props']] }>;
 };
 
 export type SearchProps<E extends Entity> = {
   page?: number;
   limit?: number;
-  sortBy?: keyof E;
+  sortBy?: keyof E['props'];
   sortDirection?: SortDirection;
   filter?: Filter<E>[] | null;
 };
@@ -44,7 +44,7 @@ export type SearchProps<E extends Entity> = {
 export class SearchParams<E extends Entity> {
   protected _page: number;
   protected _limit: number = 10;
-  protected _sortBy: keyof E | null;
+  protected _sortBy: keyof E['props'] | null;
   protected _sortDirection: SortDirection | null;
   protected _filter: Filter<E>[] | null;
 
@@ -64,7 +64,7 @@ export class SearchParams<E extends Entity> {
     return this._limit;
   }
 
-  get sortBy(): keyof E | null {
+  get sortBy(): keyof E['props'] | null {
     return this._sortBy;
   }
 
@@ -84,7 +84,7 @@ export class SearchParams<E extends Entity> {
     this._limit = NumberUtil.IsPositiveInteger(value) ? value : 10;
   }
 
-  set sortBy(sortBy: keyof E | null) {
+  set sortBy(sortBy: keyof E['props'] | null) {
     this._sortBy = StringUtil.IsNonEmptyString(sortBy) ? sortBy : null;
   }
 
@@ -104,7 +104,7 @@ export type SearchResultProps<E extends Entity> = {
   totalItems: number;
   currentPage: number;
   limit: number;
-  sortedBy: keyof E | null;
+  sortedBy: keyof E['props'] | null;
   sortDirection: SortDirection | null;
   filter: Filter<E>[] | null;
 };
@@ -115,7 +115,7 @@ export class SearchResult<E extends Entity> {
   readonly currentPage: number;
   readonly lastPage: number;
   readonly limit: number;
-  readonly sortedBy: keyof E | null;
+  readonly sortedBy: keyof E['props'] | null;
   readonly sortDirection: SortDirection | null;
   readonly filter: Filter<E>[] | null;
 
@@ -146,6 +146,7 @@ export class SearchResult<E extends Entity> {
 
 export interface SearchableRepositoryInterface<E extends Entity>
   extends RepositoryInterface<E> {
-  sortableFields: (keyof E)[];
+  sortableFields: (keyof E['props'])[];
+  filterableFields: (keyof E['props'])[];
   search(searchInput: SearchParams<E>): Promise<SearchResult<E>>;
 }
