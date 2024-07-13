@@ -1,4 +1,4 @@
-import { ZodValidator } from '@/shared/domain/validators/zod.validator';
+import { ZodValidator } from '@/shared/domain/validators/zod-validator/zod.validator';
 import { z } from 'zod';
 
 export const userSchema = z.object({

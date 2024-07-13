@@ -2,8 +2,8 @@ import { ZodError, ZodSchema } from 'zod';
 import {
   FieldsErrors,
   ValidatorFieldsInterface,
-} from './validator-fields.interface';
-import { ObjectUtil } from '../utils/object-util';
+} from '../validator-fields.interface';
+import { ObjectUtil } from '../../utils/object-util';
 
 export abstract class ZodValidator<Props>
   implements ValidatorFieldsInterface<Props>

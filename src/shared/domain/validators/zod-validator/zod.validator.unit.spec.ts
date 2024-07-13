@@ -1,5 +1,5 @@
 import * as zod from 'zod';
-import { ZodValidator } from '../../zod.validator';
+import { ZodValidator } from './zod.validator';
 
 type StubType = {
   field: string;
