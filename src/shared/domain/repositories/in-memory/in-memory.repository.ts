@@ -5,7 +5,7 @@ import { RepositoryInterface } from '../repository.interface';
 export abstract class InMemoryRepository<E extends Entity>
   implements RepositoryInterface<E>
 {
-  private entities: Record<string, E> = {};
+  protected entities: Record<string, E> = {};
 
   async insert(entity: E): Promise<void> {
     this.entities[entity.id] = entity;
