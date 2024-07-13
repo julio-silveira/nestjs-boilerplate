@@ -21,7 +21,7 @@ const zodErrorMock = zod.ZodError.create([
   },
 ]);
 
-describe('ZodFields', () => {
+describe('ZodValidator unit tests', () => {
   let zodValidator: StubZodValidator;
 
   beforeEach(() => {
