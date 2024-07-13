@@ -4,12 +4,33 @@ import { NumberUtil } from '../utils/number/number.util';
 import { StringUtil } from '../utils/string/string.util';
 import { RepositoryInterface } from './repository.interface';
 
-export type SortDirection = 'asc' | 'desc';
+export const SortDirections = {
+  ASC: 'asc',
+  DESC: 'desc',
+} as const;
 
-export type FilterOperations = 'eq';
+export type SortDirection =
+  (typeof SortDirections)[keyof typeof SortDirections];
+
+export const FilterOperations = {
+  EQ: 'eq',
+} as const;
+
+export type FilterOperation =
+  (typeof FilterOperations)[keyof typeof FilterOperations];
+
+export const FilterComparisonModes = {
+  AND: 'and',
+  OR: 'or',
+} as const;
+
+export type FilterComparison =
+  (typeof FilterComparisonModes)[keyof typeof FilterComparisonModes];
 
 export type Filter<E extends Entity> = {
-  [K in keyof E]?: { op: FilterOperations; value: E[K] }[];
+  field: keyof E;
+  comparisonMode: FilterComparison | null;
+  filters: Array<{ op: FilterOperation; value: E[keyof E] }>;
 };
 
 export type SearchProps<E extends Entity> = {
@@ -17,7 +38,7 @@ export type SearchProps<E extends Entity> = {
   limit?: number;
   sortBy?: keyof E;
   sortDirection?: SortDirection;
-  filter?: Filter<E>;
+  filter?: Filter<E>[] | null;
 };
 
 export class SearchParams<E extends Entity> {
@@ -25,7 +46,7 @@ export class SearchParams<E extends Entity> {
   protected _limit: number = 10;
   protected _sortBy: keyof E | null;
   protected _sortDirection: SortDirection | null;
-  protected _filter: Filter<E> | null;
+  protected _filter: Filter<E>[] | null;
 
   constructor(props: SearchProps<E>) {
     this._page = props.page || 1;
@@ -51,7 +72,7 @@ export class SearchParams<E extends Entity> {
     return this._sortDirection;
   }
 
-  get filter(): Filter<E> | null {
+  get filter(): Filter<E>[] | null {
     return this._filter;
   }
 
@@ -73,7 +94,7 @@ export class SearchParams<E extends Entity> {
       : null;
   }
 
-  set filter(filter: Filter<E> | null) {
+  set filter(filter: Filter<E>[] | null) {
     this._filter = BooleanUtil.isTruthy(filter) ? filter : null;
   }
 }
@@ -85,7 +106,7 @@ export type SearchResultProps<E extends Entity> = {
   limit: number;
   sortedBy: keyof E | null;
   sortDirection: SortDirection | null;
-  filter: Filter<E> | null;
+  filter: Filter<E>[] | null;
 };
 
 export class SearchResult<E extends Entity> {
@@ -96,7 +117,7 @@ export class SearchResult<E extends Entity> {
   readonly limit: number;
   readonly sortedBy: keyof E | null;
   readonly sortDirection: SortDirection | null;
-  readonly filter: Filter<E> | null;
+  readonly filter: Filter<E>[] | null;
 
   constructor(props: SearchResultProps<E>) {
     this.items = props.items;
